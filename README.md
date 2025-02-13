@@ -139,6 +139,11 @@ If you encounter any issues, feel free to open an issue on GitHub or reach out v
 
 Code with fun! 🚀
 
+<h2>Screen Shots</h2>
+
+
+<img src="https://github.com/user-attachments/assets/a1404ba4-6947-498b-b831-64ac407a0e0b" width="500">
+
 
 
 
