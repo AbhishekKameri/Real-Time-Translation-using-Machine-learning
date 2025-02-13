@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English to Multiple Languages Translator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>English to Hindi, Marathi, Kannada Translator</h2>
+    
+    <form method="POST">
+        <textarea id="input_text" name="input_text" rows="4" cols="50" placeholder="Enter text to translate"></textarea>
+        <button type="button" id="voice_button">🎤 Speak</button><br><br>
+
+        <label for="language">Choose a language:</label>
+        <select name="language" id="language">
+            <option value="hi">Hindi</option>
+            <option value="mr">Marathi</option>
+            <option value="kn">Kannada</option>
+        </select><br><br>
+
+        <button type="submit">Translate</button>
+    </form>
+
+    {% if translation %}
+        <h3>Translation:</h3>
+        <p>{{ translation }}</p>
+    {% endif %}
+
+    <script>
+        document.getElementById("voice_button").addEventListener("click", function() {
+            let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = "en-US";
+            recognition.start();
+            
+            recognition.onresult = function(event) {
+                document.getElementById("input_text").value = event.results[0][0].transcript;
+            };
+        });
+    </script>
+</body>
+</html>
