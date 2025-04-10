@@ -1,43 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English to Multiple Languages Translator</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>English to Multiple Languages Translator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <h2>English to Hindi, Marathi, Kannada Translator</h2>
-    
-    <form method="POST">
-        <textarea id="input_text" name="input_text" rows="4" cols="50" placeholder="Enter text to translate"></textarea>
-        <button type="button" id="voice_button">🎤 Speak</button><br><br>
+  <h2>Realtime Language Translator</h2>
 
-        <label for="language">Choose a language:</label>
-        <select name="language" id="language">
-            <option value="hi">Hindi</option>
-            <option value="mr">Marathi</option>
-            <option value="kn">Kannada</option>
-        </select><br><br>
+  <form method="POST">
+    <!-- Text input + voice -->
+    <div class="textarea-wrapper">
+      <textarea id="input_text" name="input_text" placeholder="Enter text to translate"></textarea>
+      <button type="button" id="voice_button" title="Speak Now">
+        <i class="fas fa-microphone" id="mic_icon"></i>
+        <span class="recording-wave" id="recording_wave"></span>
+      </button>
+    </div>
 
-        <button type="submit">Translate</button>
-    </form>
+    <!-- Language dropdown -->
+    <!-- Language dropdown -->
+<label for="language">Choose a language:</label>
+<select name="language" id="language">
+  <option value="hi" {% if selected_lang == 'hi' %}selected{% endif %}>Hindi</option>
+  <option value="mr" {% if selected_lang == 'mr' %}selected{% endif %}>Marathi</option>
+  <option value="kn" {% if selected_lang == 'kn' %}selected{% endif %}>Kannada</option>
+  <option value="ta" {% if selected_lang == 'ta' %}selected{% endif %}>Tamil</option>
+  <option value="te" {% if selected_lang == 'te' %}selected{% endif %}>Telugu</option>
+  <option value="ml" {% if selected_lang == 'ml' %}selected{% endif %}>Malayalam</option>
+  <option value="bn" {% if selected_lang == 'bn' %}selected{% endif %}>Bengali</option>
+</select>
+    <br><br>
 
-    {% if translation %}
-        <h3>Translation:</h3>
-        <p>{{ translation }}</p>
-    {% endif %}
+    <!-- Submit -->
+    <button type="submit">Translate</button>
+  </form>
 
-    <script>
-        document.getElementById("voice_button").addEventListener("click", function() {
-            let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = "en-US";
-            recognition.start();
-            
-            recognition.onresult = function(event) {
-                document.getElementById("input_text").value = event.results[0][0].transcript;
-            };
-        });
-    </script>
+  {% if translation %}
+    <h3>Translation:</h3>
+    <p>{{ translation }}</p>
+  {% endif %}
+
+  <!-- Voice Recognition Script -->
+  <script>
+    const voiceBtn = document.getElementById("voice_button");
+    const inputText = document.getElementById("input_text");
+
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "en-US";
+
+    voiceBtn.addEventListener("click", () => {
+      voiceBtn.classList.add("recording");
+      recognition.start();
+    });
+
+    recognition.onresult = function(event) {
+      inputText.value = event.results[0][0].transcript;
+    };
+
+    recognition.onend = function() {
+      voiceBtn.classList.remove("recording");
+    };
+  </script>
 </body>
 </html>
