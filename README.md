@@ -142,7 +142,10 @@ Code with fun! 🚀
 <h2>Screen Shots</h2>
 
 
-<img src="https://github.com/user-attachments/assets/a1404ba4-6947-498b-b831-64ac407a0e0b" width="500">
+<img src="https://github.com/user-attachments/assets/1c1b75aa-e9f3-40de-a8f5-62dd0eb2007b" width="500">
+<img src="https://github.com/user-attachments/assets/8417e8c6-bb93-4664-b18c-471031165a4a" width="500">
+
+
 
 
 
