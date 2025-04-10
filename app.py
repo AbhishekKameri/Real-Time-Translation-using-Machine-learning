@@ -5,13 +5,12 @@ import torch
 
 app = Flask(__name__)
 
-# Define available translation models
+# Translation model mappings
 MODEL_MAPPING = {
-    "hi": "Helsinki-NLP/opus-mt-en-hi",   # English → Hindi
-    "mr": "Helsinki-NLP/opus-mt-en-mr"    # English → Marathi
+    "hi": "Helsinki-NLP/opus-mt-en-hi",
+    "mr": "Helsinki-NLP/opus-mt-en-mr"
 }
 
-# Load models and tokenizers for Hindi and Marathi
 models = {}
 tokenizers = {}
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -20,49 +19,50 @@ for lang, model_name in MODEL_MAPPING.items():
     tokenizers[lang] = MarianTokenizer.from_pretrained(model_name)
     models[lang] = MarianMTModel.from_pretrained(model_name).to(device)
 
-# Google Translate API for Kannada
 translator = Translator()
 
 def translate_text(text, target_lang):
-    """Translates input text from English to the selected target language."""
     if not text.strip():
         return "Please enter some text to translate."
 
-    if target_lang == "kn":  # Use Google Translate for Kannada
-        return translator.translate(text, src="en", dest="kn").text
+    # Languages supported via Google Translate
+    google_langs = ["hi", "kn", "mr", "ta", "te", "ml", "bn"]
 
-    if target_lang not in models:
-        return "Unsupported language selected."
+    if target_lang in google_langs:
+        try:
+            return translator.translate(text, src="en", dest=target_lang).text
+        except Exception as e:
+            return f"Google Translate error: {str(e)}"
 
-    try:
-        tokenizer = tokenizers[target_lang]
-        model = models[target_lang]
+    # If a huggingface model is available (currently for hi and mr only)
+    if target_lang in models:
+        try:
+            tokenizer = tokenizers[target_lang]
+            model = models[target_lang]
+            inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True).to(device)
+            translated_ids = model.generate(**inputs)
+            translated_text = tokenizer.batch_decode(translated_ids, skip_special_tokens=True)
+            return translated_text[0]
+        except Exception as e:
+            return f"Model translation error: {str(e)}"
 
-        # Tokenize input and move tensors to device
-        inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True).to(device)
-        translated_ids = model.generate(**inputs)
+    return "Unsupported language selected."
 
-        # Decode translation
-        translated_text = tokenizer.batch_decode(translated_ids, skip_special_tokens=True)
-        return translated_text[0]
-
-    except Exception as e:
-        return f"Error in translation: {str(e)}"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     translation = ""
-    selected_lang = "hi"  # Default to Hindi
+    selected_lang = "hi"
 
     if request.method == 'POST':
-        input_text = request.form.get("input_text", "").strip()
         selected_lang = request.form.get("language", "hi")
+        input_text = request.form.get("input_text", "").strip()
 
         if input_text:
             translation = translate_text(input_text, selected_lang)
         else:
             translation = "Please enter some text to translate."
-    
+
     return render_template('index.html', translation=translation, selected_lang=selected_lang)
 
 if __name__ == '__main__':
