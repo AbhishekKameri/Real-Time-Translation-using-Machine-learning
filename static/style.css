@@ -392,6 +392,36 @@ box-shadow: 0 0 14px #43cea2, 0 0 28px #185a9d inset;
     }
   }
 
+  .translation-box {
+    position: relative;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    max-width: 600px;
+    margin-top: 15px;
+  }
+  
+  .main-btn {
+    background-color:  #0f2027; /* Same as Translate */
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .main-btn:hover {
+    background-color: #2c5364;
+  }
+  
+  .main-btn i {
+    margin-right: 6px;
+  }
+  
+  
   
   
   
