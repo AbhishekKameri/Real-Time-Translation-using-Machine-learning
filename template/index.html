@@ -6,14 +6,18 @@
   <title>English to Multiple Languages Translator</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> 
+
 </head>
 <body>
   <h2>Realtime Language Translator</h2>
+  
 
-  <form method="POST">
+  <form method="POST" autocomplete="off">
+
     <!-- Text input + voice -->
     <div class="textarea-wrapper">
-      <textarea id="input_text" name="input_text" placeholder="Enter text to translate"></textarea>
+      <textarea id="input_text" name="input_text" placeholder="Enter text to translate" autocomplete="off"></textarea>
       <button type="button" id="voice_button" title="Speak Now">
         <i class="fas fa-microphone" id="mic_icon"></i>
         <span class="recording-wave" id="recording_wave"></span>
@@ -35,13 +39,37 @@
     <br><br>
 
     <!-- Submit -->
-    <button type="submit">Translate</button>
+    <button type="submit" class="main-btn">Translate</button>
+    <div id="spinner" style="display:none; margin-top:10px;">
+      <i class="fas fa-spinner fa-spin"></i> Translating...
+    </div>
+    
+
   </form>
 
   {% if translation %}
-    <h3>Translation:</h3>
-    <p>{{ translation }}</p>
-  {% endif %}
+  <h3>Translation:</h3>
+  <div class="translation-box">
+    <p id="translated_text">{{ translation }}</p>
+    <button class="main-btn" onclick="copyTranslation()">
+      <i class="fas fa-copy"></i> Copy
+    </button>
+    
+  </div>
+{% endif %}
+
+<script>
+  const inputField = document.getElementById("input_text");
+  const translationBox = document.getElementById("translated_text");
+
+  inputField.addEventListener("input", () => {
+    if (inputField.value.trim() === "") {
+      translationBox.innerText = "";
+    }
+  });
+</script>
+
+
 
   <!-- Voice Recognition Script -->
   <script>
@@ -64,5 +92,34 @@
       voiceBtn.classList.remove("recording");
     };
   </script>
+
+<script>
+  function copyTranslation() {
+    const text = document.getElementById("translated_text").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Translation copied!");
+    });
+  }
+</script>
+<script>
+  // Clear input and translated text after form is submitted
+  document.querySelector("form").addEventListener("submit", function () {
+    setTimeout(() => {
+      document.getElementById("input_text").value = "";
+      document.getElementById("translated_text").innerText = "";
+    }, 100); // Short delay to let the response render first
+  });
+</script>
+
+<script>
+  const form = document.querySelector('form');
+  form.addEventListener('submit', () => {
+    document.getElementById('spinner').style.display = 'block';
+  });
+</script>
+
+
+  
+
 </body>
 </html>
